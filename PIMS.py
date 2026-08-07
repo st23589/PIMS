@@ -22,7 +22,7 @@ def name_verify():
             print("Two names please")
         else:
             valid = True
-            return driver
+            return driver.lower().title()
 def licence_plate_verify():
     valid = False
     while valid == False:
@@ -88,12 +88,27 @@ def record_offense():
     differance = speed - limit    
     fine = fine_calculator(differance)
     recorded_offenses[driver] = [plate, speed, limit, differance, fine]
-def search_records():
-    print('driver', 'licence', 'limit' , 'speed', 'over', 'fine')
+def view_records():
+    print('driver         licence    limit  speed   over   fine')
     for record in recorded_offenses:
-        print(record)
-  
+        print(record, end=('   '))
+        for details in recorded_offenses[record]:
+            print(details, end=('     '))
+
+def search_records(name):
+    if name.lower().title() in recorded_offenses:
+        print(name, end('   '))
+        for details in recorded_offenses[name]:
+            print(details, end=('     '))        
+    else:
+        print('Not in database')
+
+def patrol_summary():
+    print('Total Offenses: ',  len(recorded_offenses))
+    for record in recorded_offenses:
+        
 menu()
 
 record_offense()
-print(recorded_offenses)
+view_records()
+search_records(input('What is the name you would like to search? '))

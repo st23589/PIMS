@@ -1,6 +1,10 @@
+#PIMS CODE SYSTEM
+#Create the dictionary used for the rest of the code
 recorded_offenses = {}
+#Outstanding warrents used for detection
 outstanding = ['Connor Riley','Rhys Henwood','Max Homan','Niek Erkkila','Jack Lilly']
 def menu():
+    #Prints the main Menu
     print('''
     Police Patrol System
        1. Record a speeding offense
@@ -9,7 +13,9 @@ def menu():
        4. Display patrol summary
        5. Exit Program
     ''')   
+
 def name_verify():
+    #Verifys the names of 
     valid = False
     while valid == False:
         driver = input('Name of Driver: ')
@@ -22,7 +28,7 @@ def name_verify():
             print("Two names please")
         else:
             valid = True
-            return driver.lower().title()
+            return driver.lower().title().strip()
 def licence_plate_verify():
     valid = False
     while valid == False:
@@ -89,26 +95,61 @@ def record_offense():
     fine = fine_calculator(differance)
     recorded_offenses[driver] = [plate, speed, limit, differance, fine]
 def view_records():
-    print('driver         licence    limit  speed   over   fine')
-    for record in recorded_offenses:
-        print(record, end=('   '))
-        for details in recorded_offenses[record]:
-            print(details, end=('     '))
-
-def search_records(name):
-    if name.lower().title() in recorded_offenses:
-        print(name, end('   '))
-        for details in recorded_offenses[name]:
-            print(details, end=('     '))        
+    if len(recorded_offenses) != 0:
+        print('driver   licence    limit  speed   over   fine')
+        for record in recorded_offenses:
+            print(record, end=('   '))
+            for details in recorded_offenses[record]:
+                print(details, end=('     '))
     else:
-        print('Not in database')
-
+        print('No offenses recorded')
+    print()
+def search_records():
+    if len(recorded_offenses) != 0:
+        name = name_verify()
+        if name in recorded_offenses:
+            print(name, end=('   '))
+            for details in recorded_offenses[name.lower().title()]:
+                print(details, end=('     '))        
+            else:
+                print('Not in database')
+    else:
+        print('No offenses recorded')
+    print()
 def patrol_summary():
-    print('Total Offenses: ',  len(recorded_offenses))
+    highest = 0
+    total_speed = 0
+    total_fine = 0 
+    print(f'Total Offenses:   {len(recorded_offenses)}')
     for record in recorded_offenses:
-        
-menu()
+        fine_str = recorded_offenses[record][4]
+        fine = int(fine_str.replace("$", ""))
+        total_fine += fine
+        speed = recorded_offenses[record][3]
+        if speed > highest:
+            highest_offense = record
+            highest = speed
+        total_speed += speed
+    print(f'Total fines issued:   ${total_fine}')
+    print(f'Average Speed Over Limit:   {total_speed/len(recorded_offenses)}')
+    print(f'Highest offence:   {highest_offense} ({highest} km/h over)')
 
-record_offense()
-view_records()
-search_records(input('What is the name you would like to search? '))
+exit = False
+print('Welcome to PIMS')
+while exit == False:
+    menu()
+    select = input('Please put the number of where you would like to go: ')
+    if select == '1':
+        record_offense()
+    elif select == '2':
+        view_records()
+    elif select == '3':
+        search_records()
+    elif select == '4':
+        patrol_summary()
+    elif select == '5':
+        print('Thank you for using PIMS')
+        exit = True
+    else:
+        print('INVALID ANSWER TRY AGAIN')
+        

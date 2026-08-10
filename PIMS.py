@@ -15,36 +15,49 @@ def menu():
     ''')   
 
 def name_verify():
-    #Verifys the names of 
+    #Verifys the names of anyone put into the system
     valid = False
     while valid == False:
+        #asks for driver name
         driver = input('Name of Driver: ')
+        #splits the name into a list
         names = [name for name in driver.split() if name]
         if driver == "":
+            #checks the name isn't blank
             print("Do not leave blank")
         elif not driver.replace(" ", "").isalpha():
+            #checks the name is only letters
             print("Only letters and spaces please")
         elif len(names) != 2:
+            #checks if it has a first and last name
             print("Two names please")
         else:
-            valid = True
+            #returns the drivers name as a title and stripped of any unwanted spaces
             return driver.lower().title().strip()
 def licence_plate_verify():
+    #verifys licence plate number
     valid = False
     while valid == False:
+        #asks for plate
         plate = input('Plate of Car: ')
         letter = 0
         digits = 0   
         letters = []
+        #creates a list of letters and numbers and counts the number of letters and numbers
         for char in plate:
             if char.isdigit() == True:
+                #adds one for each digit
                 digits += 1
             elif char.isalpha() == True:
+                #adds one for each letter
                 letter += 1
+            #adds charector to the list
             letters.append(char)
+            #if the first two charectors are letters 
         if letters[0].isalpha() == True and letters[1].isalpha() == True: 
+            #if there are 6 numbers and 2 letters
             if digits == 6 and letter == 2:
-                valid = True
+                #returns verified plate
                 return plate
             else:
                 print('Please have 6 numbers and 2 letters')
@@ -52,6 +65,7 @@ def licence_plate_verify():
             print('Please begin plate with two letters') 
 
 def fine_calculator(over):
+    #calculates fine 
     if over >= 1 and over <= 10:
         fine = '$30'
     elif over <= 20:
@@ -62,18 +76,23 @@ def fine_calculator(over):
         fine = '$400'
     else:
         fine = '$630'
-    return fine
-def warrant_check(name, outstanding):
-    if name in outstanding:
-        print('This person has an outstanding Warrant Be warned')
+    #after its all done returns the fine
+    return fine    
 def record_offense():
+    #records an offense
+    #calls the name verify function
     driver = name_verify()
-    warrant_check(driver, outstanding)
+    #checks the persons name against the outstanding warrents
+    if driver in outstanding:
+        print('This person has an outstanding Warrant Be warned')
+    #calls the plate verify function
     plate = licence_plate_verify()
     valid = False
     while valid == False:
+        #finds the limit and verifys it
         try:
             limit = int(input('Area Limit: '))
+            #checks that the limit is between 30 and 110
             if limit <= 110 and limit >= 30:
                 valid = True
             else:
@@ -85,31 +104,48 @@ def record_offense():
     while valid == False:
         try:
             speed = int(input('Car Speed: '))
+            #checks that the car speed is over the limit
             if speed > limit:
                 valid = True
             else:
                 print('Not over Limit')
         except ValueError:
-            print('NOT A NUMBER')    
-    differance = speed - limit    
+            print('NOT A NUMBER') 
+    #finds differance in speed
+    differance = speed - limit
+    #calls fine calculator using differance
     fine = fine_calculator(differance)
+    #records the offense
     recorded_offenses[driver] = [plate, speed, limit, differance, fine]
 def view_records():
+    #view all records
+    #only works if recorded offenses are more than zero
     if len(recorded_offenses) != 0:
+        #prints key
         print('driver   licence    limit  speed   over   fine')
+        #for each recorded offense
         for record in recorded_offenses:
+            # prints the name
             print(record, end=('   '))
             for details in recorded_offenses[record]:
+                #prints the details of the offender
                 print(details, end=('     '))
+        print()
     else:
         print('No offenses recorded')
     print()
 def search_records():
+    #search for a specific record
+    #only works if recorded offenses are more than zero
     if len(recorded_offenses) != 0:
+        #calls name verify function
         name = name_verify()
         if name in recorded_offenses:
+            #if the name is in the record
+            #prints the name
             print(name, end=('   '))
-            for details in recorded_offenses[name.lower().title()]:
+            for details in recorded_offenses[name]:
+                #prints the details 
                 print(details, end=('     '))        
             else:
                 print('Not in database')
@@ -117,39 +153,60 @@ def search_records():
         print('No offenses recorded')
     print()
 def patrol_summary():
+    #gives a summary of the patrol
     highest = 0
     total_speed = 0
     total_fine = 0 
+    #shows total offenses recorded
     print(f'Total Offenses:   {len(recorded_offenses)}')
+    #for every offense in the record
     for record in recorded_offenses:
         fine_str = recorded_offenses[record][4]
+        #finds the fine they were given
         fine = int(fine_str.replace("$", ""))
+        #turns the fine into an interger
         total_fine += fine
+        #adds fine to total fine
         speed = recorded_offenses[record][3]
+        #finds speed of offender
         if speed > highest:
+            #finds the highest offender and speed they were traveling
             highest_offense = record
             highest = speed
+        #adds speed to total speed
         total_speed += speed
+    #prints the total of all the fines
     print(f'Total fines issued:   ${total_fine}')
+    #prints out average of the speed over limit
     print(f'Average Speed Over Limit:   {total_speed/len(recorded_offenses)}')
+    #prints the highest speed over limit and their name
     print(f'Highest offence:   {highest_offense} ({highest} km/h over)')
-
+#sets exit to false
 exit = False
+#welcomes the user
 print('Welcome to PIMS')
+#while the users doesn't want to enter
 while exit == False:
     menu()
+    #makes the user select where they want to go
     select = input('Please put the number of where you would like to go: ')
     if select == '1':
+        #calls record offense function
         record_offense()
     elif select == '2':
+        #calls view records function
         view_records()
     elif select == '3':
+        #calls search records function
         search_records()
     elif select == '4':
+        #calls patrol summary
         patrol_summary()
     elif select == '5':
+        #exits the code
         print('Thank you for using PIMS')
         exit = True
     else:
+        #doesn't let the user enter wrong answer
         print('INVALID ANSWER TRY AGAIN')
         

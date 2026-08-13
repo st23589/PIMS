@@ -58,7 +58,7 @@ def licence_plate_verify():
             #if there are 6 numbers and 2 letters
             if digits == 6 and letter == 2:
                 #returns verified plate
-                return plate
+                return plate.upper()
             else:
                 print('Please have 6 numbers and 2 letters')
         else:
@@ -139,18 +139,39 @@ def search_records():
     #only works if recorded offenses are more than zero
     if len(recorded_offenses) != 0:
         #calls name verify function
-        name = name_verify()
-        if name in recorded_offenses:
-            #if the name is in the record
-            #prints the name
-            print(name, end=('   '))
-            for details in recorded_offenses[name]:
-                #prints the details 
-                print(details, end=('     '))        
+        valid = False
+        while valid == False:
+            choice = input('Would you like to search for plate or name? ').lower()
+            if choice == 'name':
+                name = name_verify()
+                if name in recorded_offenses:
+                    #if the name is in the record
+                    #prints the name
+                    print(name, end=('   '))
+                    for details in recorded_offenses[name]:
+                        #prints the details 
+                        print(details, end=('     '))       
+                else:
+                    print('Not in database')
+                    valid = True
+            elif choice == 'plate':
+                plate = licence_plate_verify()
+                # find all names whose details list contains the plate
+                matching_keys = [key for key, values in recorded_offenses.items() if plate in values]
+                if matching_keys:
+                    for name in matching_keys:
+                        print(name, end='   ')
+                        for details in recorded_offenses[name]:
+                            print(details, end='     ')
+                else:
+                    print('Not in database')
+                valid = True  # exit loop after search
+
             else:
-                print('Not in database')
+                print('NOT VALID OPTION')
     else:
         print('No offenses recorded')
+        valid = True    
     print()
 def patrol_summary():
     #gives a summary of the patrol

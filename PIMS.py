@@ -5,14 +5,14 @@ recorded_offenses = {}
 outstanding = ['Connor Riley','Rhys Henwood','Max Homan','Niek Erkkila','Jack Lilly']
 def menu():
     #Prints the main Menu
-    print('''
-    Police Patrol System
+    print('=' * 35)
+    print('''Police Patrol System
        1. Record a speeding offense
        2. View all recorded offenses
        3. Search offense records
        4. Display patrol summary
-       5. Exit Program
-    ''')   
+       5. Exit Program''')   
+    print('=' * 35)
 
 def name_verify():
     #Verifys the names of anyone put into the system
@@ -63,33 +63,10 @@ def licence_plate_verify():
                 print('Please have 6 numbers and 2 letters')
         else:
             print('Please begin plate with two letters') 
-
-def fine_calculator(over):
-    #calculates fine 
-    if over >= 1 and over <= 10:
-        fine = '$30'
-    elif over <= 20:
-        fine = '$80'
-    elif over <= 30:
-        fine = '$170'
-    elif over <= 40:
-        fine = '$400'
-    else:
-        fine = '$630'
-    #after its all done returns the fine
-    return fine    
-def record_offense():
-    #records an offense
-    #calls the name verify function
-    driver = name_verify()
-    #checks the persons name against the outstanding warrents
-    if driver in outstanding:
-        print('This person has an outstanding Warrant Be warned')
-    #calls the plate verify function
-    plate = licence_plate_verify()
+def speeds():
     valid = False
     while valid == False:
-        #finds the limit and verifys it
+    #finds the limit and verifys it
         try:
             limit = int(input('Area Limit: '))
             #checks that the limit is between 30 and 110
@@ -113,6 +90,31 @@ def record_offense():
             print('NOT A NUMBER') 
     #finds differance in speed
     differance = speed - limit
+    return differance, limit, speed
+def fine_calculator(over):
+    #calculates fine 
+    if over >= 1 and over <= 10:
+        fine = '$30'
+    elif over <= 20:
+        fine = '$80'
+    elif over <= 30:
+        fine = '$170'
+    elif over <= 40:
+        fine = '$400'
+    else:
+        fine = '$630'
+    #after its all done returns the fine
+    return fine    
+def record_offense():
+    #records an offense
+    #calls the name verify function
+    driver = name_verify()
+    #checks the persons name against the outstanding warrents
+    if driver in outstanding:
+        print('This person has an outstanding Warrant Be warned')
+    #calls the plate verify function
+    plate = licence_plate_verify()
+    differance, limit, speed = speeds()
     #calls fine calculator using differance
     fine = fine_calculator(differance)
     #records the offense
@@ -122,7 +124,9 @@ def view_records():
     #only works if recorded offenses are more than zero
     if len(recorded_offenses) != 0:
         #prints key
-        print('driver   licence    limit  speed   over   fine')
+        print('=' * 55)
+        print('driver         licence    limit  speed   over   fine')
+        print('=' * 55)
         #for each recorded offense
         for record in recorded_offenses:
             # prints the name
